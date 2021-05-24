@@ -1,0 +1,14 @@
+{
+  "name": "express_server",
+  "version": "1.0.0",
+  "description": "backend expressjs nodejs  server ",
+  "main": "app.js",
+  "scripts": {
+    "dev": "nodemon app.js"
+  },
+  "author": "pankaj agham",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
