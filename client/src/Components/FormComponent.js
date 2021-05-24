@@ -2,15 +2,19 @@
 import {Form, Button, Segment} from "semantic-ui-react";
 import {React, useState} from 'react';
 
-function FormComponent(){
+function FormComponent({onFormSubmit}){
     const [user, setUserData] = useState({
         userName: "",
         phone_no1:"",
         phone_no2:"",
-        call_duration: 5
+        call_duration: '5'
 
     })
-    const handleSubmit = (e) => e.preventDefault();
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log("sdsddsddsd",user)
+        onFormSubmit(user.call_duration)
+    };
 
     const handleChange = (e) =>{
         const {name, value} = e.target
@@ -86,7 +90,7 @@ function FormComponent(){
                     />
                 </Form.Group>
                 
-                <Button type='submit'>Call</Button>
+                <Button color="grey" type='submit'>Call</Button>
             </Segment>
         </Form>
         </>
