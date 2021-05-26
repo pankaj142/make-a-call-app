@@ -1,9 +1,7 @@
 const db = require("../../db/config");
 const Calls = db.calls;
 const plivo = require("plivo");
-
-const AUTH_ID = "MANMNMZJUXMTGXNGM3YZ";
-const AUTH_TOKEN = "MjgzMzlkMmUwOWZhZTI5MDJmOWU4OTY2Yzk3MTVm";
+const apiResponse = require("../../helpers/apiResponse");
 
 const CreateCall = async (req, res) => {
   try {
@@ -20,10 +18,11 @@ const CreateCall = async (req, res) => {
       process.env.PLIVO_AUTH_ID,
       process.env.PLIVO_AUTH_TOKEN
     );
+
     client.calls
       .create(
-        "+919975277142", // from
-        "+917972998543", // to
+        req.body.user_phone, // from
+        req.body.receiver_phone, // to
         "http://s3.amazonaws.com/static.plivo.com/answer.xml", // answer url
         {
           answerMethod: "GET",
@@ -44,27 +43,18 @@ const CreateCall = async (req, res) => {
           // Save Call in the database
           Calls.create(call)
             .then((data) => {
-              res.send(data);
+              return apiResponse.successResponse(res,"Call Success and call details added to db");
             })
             .catch((err) => {
-              res.status(500).send({
-                message:
-                  err.message ||
-                  "Some error occurred while saving the call to db.",
-              });
+                return apiResponse.successResponse(res,"Call success, but could not make entry to db.");
             });
         },
         function (err) {
-          res.status(400).send({
-            message: err.message || "Some problem occured while making call.",
-          });
+          return apiResponse.ErrorResponse(res, 'Something wrong with Plivo Service, could not make call.', 400);
         }
       );
   } catch (err) {
-    res.status(400).send({
-      message: "Something went wrong!",
-    });
-    return;
+    return apiResponse.ErrorResponse(res, "Something went wrong, please try again.");
   }
 };
 
