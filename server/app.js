@@ -1,9 +1,13 @@
 const express = require("express");
 const bodyParser = require('body-parser')
-const path = require('path')
+const path = require('path');
+const cors = require("cors");
 
 const app = express();
 const PORT = 4000;
+
+//cors allow
+app.use(cors({ origin: 'http://localhost:3000' }));
 
 require('dotenv').config({ path: path.resolve(__dirname, '.env') })
 
@@ -19,8 +23,14 @@ db.sequelize.sync({ force: false }).then(() => {
     console.log("Drop and re-sync db.");
 });
 
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    next();
+  });
+
 //Routes
 const callsRouter = require("./routes/calls/calls");
+
 
 app.use("/api", callsRouter);
 

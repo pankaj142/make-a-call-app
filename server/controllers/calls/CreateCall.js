@@ -50,6 +50,7 @@ const CreateCall = async (req, res) => {
             });
         },
         function (err) {
+          console.log("err",err)
           return apiResponse.ErrorResponse(res, 'Something wrong with Plivo Service, could not make call.', 400);
         }
       );

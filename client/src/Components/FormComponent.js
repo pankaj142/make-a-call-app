@@ -1,19 +1,40 @@
 
-import {Form, Button, Segment} from "semantic-ui-react";
-import {React, useState} from 'react';
+import {Form, Button, Segment, Header, Modal} from "semantic-ui-react";
+import {React, useState, useRef} from 'react';
+const axios = require('axios');
+const BASE_API_URL = "http://localhost:4000";
 
-function FormComponent({onFormSubmit}){
+function FormComponent(){
+    const [open, setOpen] = useState(false);
+    const pendingTime = useRef(0);
     const [user, setUserData] = useState({
-        userName: "",
-        phone_no1:"",
-        phone_no2:"",
-        call_duration: '5'
-
+        username: "",
+        user_phone:"",
+        receiver_phone:"",
+        duration: '5'
     })
+
+    // const countDown = (seconds)=>{
+
+    // }
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("sdsddsddsd",user)
-        onFormSubmit(user.call_duration)
+        axios({
+            url: `${BASE_API_URL}/api/call`, 
+            method : 'POST',
+            headers: { 'content-type': 'application/json' },
+            mode: 'no-cors',
+            data : user
+          })
+            .then(response => {
+              pendingTime.current = parseInt(user.duration)*60;
+              setOpen(true);
+              console.log("ress", response);
+            })
+            .catch((error) => {
+              console.log("error",error);
+            });
     };
 
     const handleChange = (e) =>{
@@ -24,75 +45,106 @@ function FormComponent({onFormSubmit}){
       
     return(
         <>
-        <Form onSubmit={handleSubmit}>
-            <Segment>
-                <Form.Input
-                    label="User Name"
-                    placeholder="Enter User Name"
-                    name="userName"
-                    value={user.userName}
-                    onChange={handleChange}
-                    fluid
-                    icon="user"
-                    iconPosition="left"
-                    required
-                />
-                <Form.Group widths='equal'>
+            <Form onSubmit={handleSubmit}>
+                <Segment>
                     <Form.Input
-                        label="Phone Number"
-                        placeholder="Enter Your Phone Number"
-                        name="phone_no1"
-                        value={user.phone_no1}
+                        label="User Name"
+                        placeholder="Enter User Name"
+                        name="username"
+                        value={user.username}
                         onChange={handleChange}
                         fluid
-                        icon="phone"
-                        iconPosition="left"
-                        required
-                    />  
-                    <Form.Input
-                        label="Receiver Phone Number"
-                        placeholder="Enter Receiver Phone Number "
-                        name="phone_no2"
-                        value={user.phone_no2}
-                        onChange={handleChange}
-                        fluid
-                        icon="phone"
+                        icon="user"
                         iconPosition="left"
                         required
                     />
-                </Form.Group>
-                
-                <Form.Group inline>
-                    <label>Call Duration :</label>
-                    <Form.Input
-                        type='radio'
-                        name="call_duration"
-                        label='Small'
-                        value='5'
-                        checked={user.call_duration === '5'}
-                        onChange={handleChange}
+                    <Form.Group widths='equal'>
+                        <Form.Input
+                            label="Phone Number"
+                            placeholder="Enter Your Phone Number"
+                            name="user_phone"
+                            value={user.user_phone}
+                            onChange={handleChange}
+                            fluid
+                            icon="phone"
+                            iconPosition="left"
+                            required
+                        />  
+                        <Form.Input
+                            label="Receiver Phone Number"
+                            placeholder="Enter Receiver Phone Number "
+                            name="receiver_phone"
+                            value={user.receiver_phone}
+                            onChange={handleChange}
+                            fluid
+                            icon="phone"
+                            iconPosition="left"
+                            required
+                        />
+                    </Form.Group>
+                    
+                    <Form.Group inline>
+                        <label>Call Duration :</label>
+                        <Form.Input
+                            type='radio'
+                            name="duration"
+                            label='Small'
+                            value='5'
+                            checked={user.duration === '5'}
+                            onChange={handleChange}
+                        />
+                        <Form.Input
+                            type='radio'
+                            name="duration"
+                            label='Medium'
+                            value='10'
+                            checked={user.duration === '10'}
+                            onChange={handleChange}
+                        />
+                        <Form.Input
+                            type='radio'
+                            name="duration"
+                            label='Large'
+                            value='15'
+                            checked={user.duration === '15'}
+                            onChange={handleChange}
+                        />
+                    </Form.Group>
+                    
+                    <Button color="grey" type='submit'>Call</Button>
+                </Segment>
+            </Form>
+            <Modal
+                onClose={() => setOpen(false)}
+                onOpen={() => setOpen(true)}
+                centered={false}
+                open={open}
+                >
+                <Modal.Header>Call Details</Modal.Header>
+                <Modal.Content>
+                    {/* <Image size='medium' src='/images/avatar/large/rachel.png' wrapped /> */}
+                    <Modal.Description>
+                    <Header>Hello {user.username}</Header>
+                    <Header>You are talking to : {user.receiver_phone}</Header>
+                    <Header>Call will ends in : {pendingTime.current} Seconds</Header>
+                    <p>
+                       hello
+                    </p>
+                    </Modal.Description>
+                </Modal.Content>
+                <Modal.Actions>
+                    <Button color='black' onClick={() => setOpen(false)}>
+                    Nope
+                    </Button>
+                    <Button
+                    content="Yep, that's me"
+                    labelPosition='right'
+                    icon='checkmark'
+                    onClick={() => setOpen(false)}
+                    positive
                     />
-                    <Form.Input
-                        type='radio'
-                        name="call_duration"
-                        label='Medium'
-                        value='10'
-                        checked={user.call_duration === '10'}
-                        onChange={handleChange}
-                    />
-                    <Form.Input
-                        type='radio'
-                        name="call_duration"
-                        label='Large'
-                        value='15'
-                        checked={user.call_duration === '15'}
-                        onChange={handleChange}
-                    />
-                </Form.Group>
-                
-                <Button color="grey" type='submit'>Call</Button>
-            </Segment>
-        </Form>
+                </Modal.Actions>
+            </Modal>
         </>
     )
 }
