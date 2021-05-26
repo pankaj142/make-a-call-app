@@ -1,22 +1,21 @@
 
-import {Form, Button, Segment, Header, Modal} from "semantic-ui-react";
-import {React, useState, useRef} from 'react';
+import {Form, Button, Segment} from "semantic-ui-react";
+import {React, useState} from 'react';
+import CallDeatilsComponent from "./CallDeatilsComponent";
+import ErrorMessageComponent from './ErrorMessageComponent';
+
 const axios = require('axios');
 const BASE_API_URL = "http://localhost:4000";
 
 function FormComponent(){
     const [open, setOpen] = useState(false);
-    const pendingTime = useRef(0);
+    const [errorView, seterrorView] = useState(false);
     const [user, setUserData] = useState({
         username: "",
         user_phone:"",
         receiver_phone:"",
         duration: '5'
     })
-
-    // const countDown = (seconds)=>{
-
-    // }
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -28,11 +27,11 @@ function FormComponent(){
             data : user
           })
             .then(response => {
-              pendingTime.current = parseInt(user.duration)*60;
               setOpen(true);
               console.log("ress", response);
             })
             .catch((error) => {
+                seterrorView(true);
               console.log("error",error);
             });
     };
@@ -40,7 +39,10 @@ function FormComponent(){
     const handleChange = (e) =>{
         const {name, value} = e.target
         setUserData((prev) =>({...prev, [name]: value}))
-        console.log("user",user)
+    }
+
+    const toggelModal = () => {
+        setOpen(prev =>!prev)
     }
       
     return(
@@ -114,37 +116,8 @@ function FormComponent(){
                     <Button color="grey" type='submit'>Call</Button>
                 </Segment>
             </Form>
-            <Modal
-                onClose={() => setOpen(false)}
-                onOpen={() => setOpen(true)}
-                centered={false}
-                open={open}
-                >
-                <Modal.Header>Call Details</Modal.Header>
-                <Modal.Content>
-                    {/* <Image size='medium' src='/images/avatar/large/rachel.png' wrapped /> */}
-                    <Modal.Description>
-                    <Header>Hello {user.username}</Header>
-                    <Header>You are talking to : {user.receiver_phone}</Header>
-                    <Header>Call will ends in : {pendingTime.current} Seconds</Header>
-                    <p>
-                       hello
-                    </p>
-                    </Modal.Description>
-                </Modal.Content>
-                <Modal.Actions>
-                    <Button color='black' onClick={() => setOpen(false)}>
-                    Nope
-                    </Button>
-                    <Button
-                    content="Yep, that's me"
-                    labelPosition='right'
-                    icon='checkmark'
-                    onClick={() => setOpen(false)}
-                    positive
-                    />
-                </Modal.Actions>
-            </Modal>
+            <CallDeatilsComponent user={user} open={open} toggelModal={toggelModal}/>
+            { errorView && <ErrorMessageComponent/>}
         </>
     )
 }

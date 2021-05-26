@@ -1,13 +1,22 @@
+import React from 'react';
+import {Message} from "semantic-ui-react";
+function TimerComponent({ timeInSeconds, disconnect }) {
+    const [time, setTime] = React.useState(timeInSeconds);
 
-import {Segment} from "semantic-ui-react";
-function TimerComponent({time}) {
+    React.useEffect(() => {
+        if (time === 0) {
+            disconnect();
+        }
+        time > 0 && setTimeout(() => setTime(time - 1), 1000);
+    }, [time]);
+
     return (
         <>
-            <Segment>
-                This is timer {time} 
-            </Segment>
+            <Message negative>
+                <Message.Header>This Call will End in : {time} Seconds</Message.Header>
+            </Message>
         </>
-    );
+    )
 }
 
-export default TimerComponent;
+export default TimerComponent
