@@ -25,7 +25,7 @@ db.sequelize
         console.log("DB connected.");
     })
     .catch((err)=>{
-        console.log("Error in db connection.");
+        console.log("Error in db connection.",err);
     });
 
 app.use((req, res, next) => {
