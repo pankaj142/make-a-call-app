@@ -2,6 +2,8 @@
 
 ## Stack used
 ```
+>> reactjs
+>> semantic-ui-react
 >> nodejs
 >> expressjs
 >> postgres
