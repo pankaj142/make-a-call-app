@@ -19,9 +19,14 @@ app.use(bodyParser.json())
 
 const db = require("./db/config");
 // db.sequelize.sync();
-db.sequelize.sync({ force: false }).then(() => {
-    console.log("Drop and re-sync db.");
-});
+db.sequelize
+    .sync({ force: false, logging: false })
+    .then(() => {
+        console.log("DB connected.");
+    })
+    .catch((err)=>{
+        console.log("Error in db connection.");
+    });
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');

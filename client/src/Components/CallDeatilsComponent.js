@@ -21,12 +21,13 @@ function CallDeatilsComponent({user, toggelModal, open}) {
                             </Grid.Column>
 
                             <Grid.Column verticalAlign='middle'>
-                                <Header><TimerComponent timeInSeconds={parseInt(user.duration)*60} disconnect={toggelModal}/></Header>
+                            <Header><TimerComponent timeInSeconds={parseInt(user.duration)*60} disconnect={toggelModal}/></Header>
+                                {/* <Header><TimerComponent timeInSeconds={10} disconnect={toggelModal}/></Header> */}
                             </Grid.Column>
                             </Grid>
-
                             <Divider vertical>And</Divider>
                         </Segment>
+                            
                     </Modal.Description>
                 </Modal.Content>
                 <Modal.Actions>

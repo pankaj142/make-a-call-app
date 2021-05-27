@@ -13,7 +13,7 @@ function TimerComponent({ timeInSeconds, disconnect }) {
     return (
         <>
             <Message negative>
-                <Message.Header>This Call will End in : {time} Seconds</Message.Header>
+                <Message.Header>This call ends in : {time} Seconds</Message.Header>
             </Message>
         </>
     )

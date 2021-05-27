@@ -1,5 +1,5 @@
 
-import {Form, Button, Segment} from "semantic-ui-react";
+import {Form, Button, Segment,  Dimmer, Loader, Image} from "semantic-ui-react";
 import {React, useState} from 'react';
 import CallDeatilsComponent from "./CallDeatilsComponent";
 import ErrorMessageComponent from './ErrorMessageComponent';
@@ -9,7 +9,9 @@ const BASE_API_URL = "http://localhost:4000";
 
 function FormComponent(){
     const [open, setOpen] = useState(false);
-    const [errorView, seterrorView] = useState(false);
+    const [errorView, setErrorView] = useState(false);
+    const [showLoader, setShowLoader] = useState(false);
+    const [errorMessage, seterrorMessage] = useState([]);
     const [user, setUserData] = useState({
         username: "",
         user_phone:"",
@@ -18,6 +20,8 @@ function FormComponent(){
     })
 
     const handleSubmit = (e) => {
+        setShowLoader(true);
+        setErrorView(false);
         e.preventDefault();
         axios({
             url: `${BASE_API_URL}/api/call`, 
@@ -27,12 +31,20 @@ function FormComponent(){
             data : user
           })
             .then(response => {
+              setShowLoader(false);
               setOpen(true);
-              console.log("ress", response);
             })
             .catch((error) => {
-                seterrorView(true);
-              console.log("error",error);
+                let err_data = error.response.data;
+                let err_msg = [];
+                if(err_data && err_data.data.length){
+                    for (let i = 0; i < err_data.data.length; i++) { 
+                        err_msg.push(err_data.data[i].msg)
+                      }
+                }
+                setShowLoader(false);
+                setErrorView(true);
+                seterrorMessage(err_msg);
             });
     };
 
@@ -43,6 +55,12 @@ function FormComponent(){
 
     const toggelModal = () => {
         setOpen(prev =>!prev)
+        setUserData({
+            username: "",
+            user_phone:"",
+            receiver_phone:"",
+            duration: '5'
+        })
     }
       
     return(
@@ -90,7 +108,7 @@ function FormComponent(){
                         <Form.Input
                             type='radio'
                             name="duration"
-                            label='Small'
+                            label='5 Mins'
                             value='5'
                             checked={user.duration === '5'}
                             onChange={handleChange}
@@ -98,7 +116,7 @@ function FormComponent(){
                         <Form.Input
                             type='radio'
                             name="duration"
-                            label='Medium'
+                            label='10 Mins'
                             value='10'
                             checked={user.duration === '10'}
                             onChange={handleChange}
@@ -106,7 +124,7 @@ function FormComponent(){
                         <Form.Input
                             type='radio'
                             name="duration"
-                            label='Large'
+                            label='15 Mins'
                             value='15'
                             checked={user.duration === '15'}
                             onChange={handleChange}
@@ -116,8 +134,17 @@ function FormComponent(){
                     <Button color="grey" type='submit'>Call</Button>
                 </Segment>
             </Form>
+
+            {/* <Segment> */}
+                <Dimmer active={showLoader} inverted>
+                    <Loader inverted content='Calling...' />
+                </Dimmer>
+
+                {/* <Image src='/images/wireframe/short-paragraph.png' /> */}
+            {/* </Segment> */}
+
             <CallDeatilsComponent user={user} open={open} toggelModal={toggelModal}/>
-            { errorView && <ErrorMessageComponent/>}
+            { errorView && <ErrorMessageComponent errorMessage ={errorMessage}/>}
         </>
     )
 }
