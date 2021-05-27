@@ -1,13 +1,17 @@
 # make-a-call-app
 
-## stack used
-nodejs
-expressjs
-postgres
-Sequelize ORM
-plivo service (for voice call)
+## Stack used
+```
+>> nodejs
+>> expressjs
+>> postgres
+>> Sequelize ORM
+>> plivo service (for voice call)
+```
 
-### install postgres and create database named "make_call_db" with user "postgres" and password "postgres"
+#### Install postgres and create database named "make_call_db" with user "postgres" and password "postgres"
+
+
 
 ## Steps to Run
 
